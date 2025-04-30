@@ -30,3 +30,7 @@
   [data-rehype-pretty-code-title] + pre {
     @apply mt-0;
   }
+  /* Constrain and center MDX images */
+  .prose img {
+    @apply block mx-auto max-w-md max-h-[50vh] object-contain;
+  }

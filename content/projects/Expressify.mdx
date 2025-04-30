@@ -1,0 +1,46 @@
+---
+title: Expressify
+description: Emotion recognition is a process of identifying human emotions from facial expressions. This project leverages FaceNet and a custom classifier to accurately classify emotions from images.
+date: "2025-04-29"
+published: true
+repository: Ahmet-Toplu/emotion_recognition
+---
+
+This report focuses on the implementation and analysis of a multimodal emotion-recognition 
+system that integrates facial-expression detection with text-based sentiment analysis. 
+Drawing on the design specification’s emphasis on highlighting mismatches between a user’s 
+facial cues and their written sentiment and informed by the project’s background research 
+report. I have developed and evaluated two CNN-based facial emotion classifiers, a 
+FaceNet-derived model and a MobileNet variant, along with a custom convolutional layer 
+module to improve feature discrimination. All experiments are scripted in Jupyter notebooks 
+(notably ER_FaceNet.ipynb, ER_MobileNet.ipynb, custom_CLayer.ipynb, and an end-to-end 
+pipeline in emotion_recognition.ipynb), with the most accurate configuration preserved 
+in ER_FaceNet.ipynb. Preprocessing routines (image resizing, normalisation, one-hot encoding) 
+and training pipelines are included. The full codebase, dependency manifest, and execution 
+instructions are publicly accessible in a GitHub repository to ensure seamless reproducibility. 
+The report is structured to first detail the development environment and datasets 
+(FER-2013 [1], AffectNet [2]), followed by an in-depth technical description of model 
+architectures and training strategies, then reproducibility guidelines (seed settings, 
+hardware requirements), and finally a comprehensive evaluation section presenting quantitative 
+metrics (accuracy, loss/accuracy curves, confusion matrices), cross-dataset generalisation 
+tests, and preliminary user-testing plans, concluding with a discussion of findings, 
+limitations, and proposed next steps. 
+ 
+Implementing my custom “SpiralConv2D” layer in custom_CLayer.ipynb proved to be the most 
+demanding engineering hurdle. In its initial form, the layer recomputed the spiral index 
+mapping and applied convolutional patches via nested Python loops on every forward pass, 
+which led to repeated tensor allocations that exhausted both system RAM and GPU memory, 
+ultimately causing out-of-range indexing errors and Jupyter kernel crashes. Although I 
+began refactoring the module to precompute its index tensor once during initialization 
+and to batch the convolution using PyTorch’s Unfold mechanism for GPU-accelerated matrix 
+operations, fully resolving the remaining indexing bugs and validating stable performance 
+would have consumed the rest of my development window. As a result, the spiral layer 
+remains disabled in the current deliverable. 
+ 
+To restore a reliable training workflow, I migrated all experiments from a CPU-only laptop 
+to my desktop workstation equipped with an NVIDIA GPU, which reduced per-epoch runtimes 
+from over two hours to under ten minutes. I also overhauled the data pipeline: switching 
+to PyTorch’s DataLoader with multiple workers and pinned memory, and replacing pure-Python 
+cropping loops with on-the-fly torchvision transforms. These optimizations halved 
+preprocessing time, eliminated memory bottlenecks, and enabled stable, reproducible training 
+of the FaceNet and MobileNet-based classifiers. 

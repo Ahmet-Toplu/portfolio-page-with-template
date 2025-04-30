@@ -6,23 +6,16 @@ import { Analytics } from "./components/analytics";
 
 export const metadata: Metadata = {
   title: {
-    default: "chronark.com",
+    default: "Ahmet-Toplu.com",
     template: "%s | chronark.com",
   },
-  description: "Co-founder of unkey.dev and founder of planetfall.io",
+  description: "A personal portfolio showcasing my web and open-source projects, case studies, and writing.",
   openGraph: {
-    title: "chronark.com",
+    title: "Ahmet-Toplu.com",
     description:
-      "Co-founder of unkey.dev and founder of planetfall.io",
-    url: "https://chronark.com",
-    siteName: "chronark.com",
-    images: [
-      {
-        url: "https://chronark.com/og.png",
-        width: 1920,
-        height: 1080,
-      },
-    ],
+      "Just a guy who loves to code.",
+    url: "https://Ahmet-Toplu.com",
+    siteName: "Ahmet-Toplu.com",
     locale: "en-US",
     type: "website",
   },
@@ -37,12 +30,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  twitter: {
-    title: "Chronark",
-    card: "summary_large_image",
-  },
   icons: {
-    shortcut: "/favicon.png",
+    icon: "/ahmet_toplu_logo.png",
+    shortcut: "/ahmet_toplu_logo.png",
   },
 };
 const inter = Inter({
