@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     locale: "en-US",
     type: "website",
   },
+  twitter: {
+    title: "Ahmet Toplu",
+  },
   robots: {
     index: true,
     follow: true,

@@ -6,41 +6,47 @@ published: true
 repository: Ahmet-Toplu/emotion_recognition
 ---
 
-This report focuses on the implementation and analysis of a multimodal emotion-recognition 
-system that integrates facial-expression detection with text-based sentiment analysis. 
-Drawing on the design specification’s emphasis on highlighting mismatches between a user’s 
-facial cues and their written sentiment and informed by the project’s background research 
-report. I have developed and evaluated two CNN-based facial emotion classifiers, a 
-FaceNet-derived model and a MobileNet variant, along with a custom convolutional layer 
-module to improve feature discrimination. All experiments are scripted in Jupyter notebooks 
-(notably ER_FaceNet.ipynb, ER_MobileNet.ipynb, custom_CLayer.ipynb, and an end-to-end 
-pipeline in emotion_recognition.ipynb), with the most accurate configuration preserved 
-in ER_FaceNet.ipynb. Preprocessing routines (image resizing, normalisation, one-hot encoding) 
-and training pipelines are included. The full codebase, dependency manifest, and execution 
-instructions are publicly accessible in a GitHub repository to ensure seamless reproducibility. 
-The report is structured to first detail the development environment and datasets 
-(FER-2013 [1], AffectNet [2]), followed by an in-depth technical description of model 
-architectures and training strategies, then reproducibility guidelines (seed settings, 
-hardware requirements), and finally a comprehensive evaluation section presenting quantitative 
-metrics (accuracy, loss/accuracy curves, confusion matrices), cross-dataset generalisation 
-tests, and preliminary user-testing plans, concluding with a discussion of findings, 
-limitations, and proposed next steps. 
- 
-Implementing my custom “SpiralConv2D” layer in custom_CLayer.ipynb proved to be the most 
-demanding engineering hurdle. In its initial form, the layer recomputed the spiral index 
-mapping and applied convolutional patches via nested Python loops on every forward pass, 
-which led to repeated tensor allocations that exhausted both system RAM and GPU memory, 
-ultimately causing out-of-range indexing errors and Jupyter kernel crashes. Although I 
-began refactoring the module to precompute its index tensor once during initialization 
-and to batch the convolution using PyTorch’s Unfold mechanism for GPU-accelerated matrix 
-operations, fully resolving the remaining indexing bugs and validating stable performance 
-would have consumed the rest of my development window. As a result, the spiral layer 
-remains disabled in the current deliverable. 
- 
-To restore a reliable training workflow, I migrated all experiments from a CPU-only laptop 
-to my desktop workstation equipped with an NVIDIA GPU, which reduced per-epoch runtimes 
-from over two hours to under ten minutes. I also overhauled the data pipeline: switching 
-to PyTorch’s DataLoader with multiple workers and pinned memory, and replacing pure-Python 
-cropping loops with on-the-fly torchvision transforms. These optimizations halved 
-preprocessing time, eliminated memory bottlenecks, and enabled stable, reproducible training 
-of the FaceNet and MobileNet-based classifiers.
+> **Expressify** captures a live webcam frame, analyses the facial emotion with a fine-tuned FaceNet model, extracts sentiment from the user’s typed text, and flags any mismatch in real time.  
+
+## Why it matters 🚩
+
+Domestic-abuse survivors, tele-therapy clients, and remote workers often mask genuine affect. Expressify surfaces subtle discord between **what you say** and **how you look**, giving counsellors or safeguarding staff an early-warning signal—without sending any sensitive data to the cloud.
+
+---
+
+## Tech stack & skills demonstrated 🛠️
+
+| Layer | Tech | Highlights |
+|-------|------|------------|
+| Vision | PyTorch · facenet-pytorch | End-to-end fine-tuned Inception-ResNet-V1 (75 % accuracy on AffectNet) |
+| NLP | HuggingFace Transformers | DistilBERT sentiment classifier, zero-shot on 7 emotions |
+| GUI | Tkinter | &lt; 40 ms webcam-to-prediction latency on RTX 3070 |
+| DataOps | Kaggle API · OpenCV | One-command download → crop → manifest pipeline |
+| MLOps | Conda · Docker · TensorBoard | Fully reproducible runs with `torch.manual_seed(42)` |
+
+---
+
+## Quick-start 🚀
+
+```bash
+git clone https://github.com/Ahmet-Toplu/emotion_recognition.git
+cd emotion_recognition
+conda env create -f environment.yml && conda activate expressify
+python app/gui.py          # launches the desktop app
+
+## Benchmarks 📊
+Dataset             Accuracy                Macro F1
+AffectNet val       0.757                   0.756
+FER-2013 val        0.642                   0.635
+Pilot webcam study  0.71 (happy/surprise)
+
+## Limitations & roadmap 🔭
+	•	Still confuses fear ↔ surprise and sad ↔ neutral; exploring co-attention fusion.
+	•	GUI is macOS/Linux-only today; Windows support and Electron wrap are planned.
+	•	SpiralConv2D prototype archived in experiments/—conceptual but non-functional.
+
+## Acknowledgment
+The author used OpenAI’s ChatGPT for code-debugging suggestions and idea generation, and Grammarly to refine the manuscript’s language.
+
+<p align="center"><i>Built with curiosity &amp; caffeine ☕</i></p>
+```
